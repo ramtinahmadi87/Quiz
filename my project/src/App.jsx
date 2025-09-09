@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import Result from "./pages/Result";
 import Questions from "./pages/Question";
 
-export default function App() {
+function App() {
   return (
     <QuizProvider>
       <Main />
@@ -19,27 +19,30 @@ function Main() {
     fetch("https://opentdb.com/api.php?amount=5&type=multiple")
       .then((res) => res.json())
       .then((data) => {
-        const formatted = data.results.map((q) => {
-          const correct = decode(q.correct_answer);
-          const options = shuffle([correct, ...q.incorrect_answers.map(decode)]);
-          return { question: decode(q.question), options, correct };
+        const formatted = data.results.map((item) => {
+          const correct = decode(item.correct_answer);
+          const options = shuffle([correct, ...item.incorrect_answers.map(decode)]);
+          return { question: decode(item.question), options, correct };
         });
         dispatch({ type: "SETQUESTIONS", payload: formatted });
       });
   }, [dispatch]);
-
-  function decode(str) {
+// نوشتم chatgpt این قسمت رو با  
+  function decode(i) {
     const txt = document.createElement("textarea");
-    txt.innerHTML = str;
+    txt.innerHTML =i;
     return txt.value;
   }
 
-  function shuffle(arr) {
-    return arr.sort(() => Math.random() - 0.5);
+  function shuffle(items) {
+    return items.sort(() => Math.random() - 0.5);
   }
+//تااینجا  
+if (state.page === "home") return <Home />;
+if (state.page === "quiz") return <Questions />;
+if (state.page === "result") return <Result />;
 
-  if (state.page === "home") return <Home />;
-  if (state.page === "quiz") return <Questions />;
-  if (state.page === "result") return <Result />;
   return null;
 }
+
+export default App
